@@ -1,26 +1,11 @@
-import {
-  EnigmaUtils,
-  SigningCosmWasmClient,
-  Secp256k1Pen,
-  pubkeyToAddress,
-  encodeSecp256k1Pubkey,
-} from 'secretjs';
+const {Wallet, SecretNetworkClient} = require('secretjs');
 import {getNodeUrl} from '@figment-secret/lib';
 import type {NextApiRequest, NextApiResponse} from 'next';
 import fs from 'fs';
 
 const CONTRACT_PATH = './contracts/secret/contract.wasm';
-
-const customFees = {
-  upload: {
-    amount: [{amount: '2000000', denom: 'uscrt'}],
-    gas: '2000000',
-  },
-  init: {
-    amount: [{amount: '500000', denom: 'uscrt'}],
-    gas: '500000',
-  },
-};
+const STORE_CODE_GAS_LIMIT = 1_000_000;
+const INIT_GAS_LIMIT = 100_000;
 
 type ResponseT = {
   contractAddress: string;
@@ -33,35 +18,63 @@ export default async function connect(
   try {
     const url = await getNodeUrl();
     const {mnemonic} = req.body;
-    const signingPen = await Secp256k1Pen.fromMnemonic(mnemonic);
-    const pubkey = encodeSecp256k1Pubkey(signingPen.pubkey);
-    const address = pubkeyToAddress(pubkey, 'secret');
 
     // Initialise client
-    const txEncryptionSeed = EnigmaUtils.GenerateNewSeed();
-    const client = new SigningCosmWasmClient(
-      url,
-      address,
-      (signBytes) => signingPen.sign(signBytes),
-      txEncryptionSeed,
-      customFees,
-    );
+    const wallet = new Wallet(mnemonic);
+    const client = new SecretNetworkClient({
+      url: url,
+      wallet: wallet,
+      walletAddress: wallet.address,
+      chainId: 'pulsar-2',
+    });
 
     // Upload the contract wasm
     const wasm = fs.readFileSync(CONTRACT_PATH);
-    const uploadReceipt = await client.undefined;
-    if (!uploadReceipt) {
-      throw new Error('uploadReceipt error');
-    }
+    //todo undefined
+    // const uploadReceipt = await client.tx.compute.undefined;
+    const uploadReceipt = await client.tx.compute.storeCode(
+      {
+        sender: wallet.address,
+        wasm_byte_code: wasm,
+        source: '',
+        builder: '',
+      },
+      {
+        gasLimit: STORE_CODE_GAS_LIMIT,
+      },
+    );
     // Get the code ID from the receipt
-    const {codeId} = uploadReceipt;
+    //todo undefined
+    // const {codeId} = uploadReceipt;
+    const codeId = Number(
+      uploadReceipt.arrayLog.find(
+        (log: {type: string; key: string}) =>
+          log.type === 'message' && log.key === 'code_id',
+      ).value,
+    );
 
     // Create an instance of the Counter contract, providing a starting count
     const initMsg = {count: 101};
-    const receipt = undefined;
+    const receipt = await client.tx.compute.instantiateContract(
+      {
+        code_id: codeId,
+        sender: wallet.address,
+        init_msg: initMsg,
+        label: 'Simple Counter' + Math.ceil(Math.random() * 100000),
+      },
+      {
+        gasLimit: INIT_GAS_LIMIT,
+      },
+    );
+    //todo undefined
+    // const contractAddress = undefined;
+    const contractAddress = receipt.arrayLog.find(
+      (log: {type: string; key: string}) =>
+        log.type === 'message' && log.key === 'contract_address',
+    ).value;
 
     res.status(200).json({
-      contractAddress: receipt.contractAddress,
+      contractAddress: contractAddress,
       transactionHash: receipt.transactionHash,
     });
   } catch (error) {

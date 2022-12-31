@@ -1,6 +1,6 @@
 import type {NextApiRequest, NextApiResponse} from 'next';
 import {getNodeUrl} from '@figment-secret/lib';
-import {CosmWasmClient} from 'secretjs';
+import {SecretNetworkClient} from 'secretjs';
 
 export default async function connect(
   req: NextApiRequest,
@@ -9,14 +9,15 @@ export default async function connect(
   try {
     const url = getNodeUrl();
     const {address} = req.body;
-    const client = new CosmWasmClient(url);
+    const client = new SecretNetworkClient({url, chainId: 'pulsar-2'});
 
-    // Query the Account object
-    const account = undefined;
+    //todo back to undefined
     // Return the balance
-    const balance = undefined;
-
-    res.status(200).json(balance);
+    const {balance} = await client.query.bank.balance({
+      address: address,
+      denom: 'uscrt',
+    });
+    res.status(200).json(balance?.amount || '0');
   } catch (error) {
     let errorMessage = error instanceof Error ? error.message : 'Unknown Error';
     res.status(500).json(errorMessage);

@@ -17,6 +17,7 @@ const Getter = () => {
 
   useEffect(() => {
     if (typeof value === 'number') {
+      console.log('dispatching SetIsCompleted', value);
       dispatch({
         type: 'SetIsCompleted',
       });
