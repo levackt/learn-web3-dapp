@@ -6,7 +6,6 @@ import axios from 'axios';
 
 import {getInnerState, getChainLabel} from 'utils/context';
 import {useGlobalState} from 'context';
-// import connect from '../../../../pages/api/secret/connect'
 
 const {Text} = Typography;
 

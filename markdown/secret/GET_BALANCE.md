@@ -58,7 +58,7 @@ You could experience some issues with the availability of the network. [**Click 
 
 **What happened in the code above?**
 
-- We check the balance by querying the bank module and accessing the `amount` property of the `balance object returned`. The `balance` here is an optional <Coin> in the QueryBalanceResponse TypeScript definition.
+- We check the balance by querying the bank module and accessing the `amount` property of the `balance` object returned. The `balance` here is an optional <Coin> in the QueryBalanceResponse TypeScript definition.
 
 {% hint style="tip" %}
 The amount returned by is denominated in **μSCRT**, so to convert it to **SCRT** you'll need to divide it by 10\*\*6

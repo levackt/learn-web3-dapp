@@ -40,15 +40,15 @@ In `pages/api/secret/deploy.ts`, implement the default function. Upload your fir
 // Upload the contract wasm
 const wasm = fs.readFileSync(CONTRACT_PATH);
 const uploadReceipt = await client.tx.compute.undefined;
-if (!uploadReceipt) {
-  throw new Error('uploadReceipt error');
-}
+
 // Get the code ID from the receipt
 const {codeId} = uploadReceipt;
 
 // Create an instance of the Counter contract, providing a starting count
 const initMsg = {count: 101};
-const receipt = undefined;
+const receipt = await client.undefined;
+
+const contractAddress = undefined;
 //...
 ```
 
@@ -87,12 +87,19 @@ const codeId = Number(
   ).value,
 );
 
+// Contract hash, useful for contract composition
+const contractCodeHash = (
+  await client.query.compute.codeHashByCodeId({code_id: codeId})
+).code_hash;
+console.log(`Contract hash: ${contractCodeHash}`);
+
 // Create an instance of the Counter contract, providing a starting count
 const initMsg = {count: 101};
 const receipt = await client.tx.compute.instantiateContract(
   {
     code_id: codeId,
     sender: wallet.address,
+    code_hash: contractCodeHash, // this is optional but makes contract executions much faster
     init_msg: initMsg,
     label: 'Simple Counter' + Math.ceil(Math.random() * 100000),
   },
@@ -100,6 +107,15 @@ const receipt = await client.tx.compute.instantiateContract(
     gasLimit: INIT_GAS_LIMIT,
   },
 );
+
+const contractAddress = receipt.arrayLog.find(
+  (log: {type: string; key: string}) =>
+    log.type === 'message' && log.key === 'contract_address',
+).value;
+
+// An alternate way to reach the contract address
+// const contractAddress = JSON.parse(receipt?.rawLog)[0].events[0]
+// .attributes[3].value;
 //...
 ```
 
@@ -111,7 +127,9 @@ const receipt = await client.tx.compute.instantiateContract(
   - The `code_id`.
   - The `init_msg` contract method to instantiate the storage with a value of `101`.
   - A label, which needs to be unique, which is why we use a random number.
+  - We set the transaction gas limit to the constant value INIT_GAS_LIMIT.
   - Optionally, we could also include a memo, a transfer amount, fees, and a code hash. For this example, these arguments are unnecessary.
+  - To find the deployed address of the contract, we can look in the receipt logs using the find method from JavaScript. As noted in the code comment, you could also parse the JSON response.
 
 ---
 
