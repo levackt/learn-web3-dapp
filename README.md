@@ -52,8 +52,6 @@ yarn dev
 
 # 🤝 Feedback and contributing
 
-If you encounter any errors during this process, please join our [Discord](https://figment.io/devchat) for help.
-
 Feel free to also open an Issue or a Pull Request on the repo itself.
 
 We hope you enjoy our Web 3 education dApps 🚀
