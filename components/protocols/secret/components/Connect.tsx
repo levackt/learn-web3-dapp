@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import {getInnerState, getChainLabel} from 'utils/context';
 import {useGlobalState} from 'context';
+// import connect from '../../../../pages/api/secret/connect'
 
 const {Text} = Typography;
 
@@ -31,6 +32,8 @@ const Connect = () => {
     setError(null);
     setVersion(null);
     try {
+      // const version = await connect();
+      // debugger
       const response = await axios.post(`/api/secret/connect`, {network});
       setVersion(response.data);
     } catch (error) {
