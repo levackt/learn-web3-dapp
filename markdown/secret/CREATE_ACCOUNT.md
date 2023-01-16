@@ -26,10 +26,6 @@ In `pages/api/secret/account.ts`, implement the function to first create a **Wal
 - [**Documentation for Secret.JS `Wallet`**](https://github.com/scrtlabs/secret.js#wallet)
 - [**Account example**](https://github.com/scrtlabs/SecretJS-Templates/blob/master/2_creating_account/create_account.js)
 
-{% hint style="info" %}
-You can [**join us on Discord**](https://discord.gg/fszyM7K), if you have questions or want help completing the tutorial.
-{% endhint %}
-
 Still not sure how to do this? No problem! The solution is below so you don't get stuck.
 
 ---

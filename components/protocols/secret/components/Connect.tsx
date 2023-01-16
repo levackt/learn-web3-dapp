@@ -31,8 +31,6 @@ const Connect = () => {
     setError(null);
     setVersion(null);
     try {
-      // const version = await connect();
-      // debugger
       const response = await axios.post(`/api/secret/connect`, {network});
       setVersion(response.data);
     } catch (error) {
