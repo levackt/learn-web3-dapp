@@ -12725,7 +12725,7 @@ secp256k1@^4.0.0, secp256k1@^4.0.1, secp256k1@^4.0.2:
     node-addon-api "^2.0.0"
     node-gyp-build "^4.2.0"
 
-secretjs@^1.7.1:
+secretjs@^1.7.2:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/secretjs/-/secretjs-1.7.2.tgz#cf5d25089db90525e7d27f4baee01fdf3917d25e"
   integrity sha512-HcFwO4rnhaLAfdsVILNmrMFV43otF87qM3mVMKSqJkSBONV2RgbBUPm5jlxarORfDb3OROcWL6TIYp+1ajKeBw==
