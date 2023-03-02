@@ -42,7 +42,7 @@ try {
     const client = new SecretNetworkClient({url, chainId: 'pulsar-2'});
     const nodeInfo = await client.query.tendermint.getNodeInfo({});
     const version = nodeInfo.default_node_info?.version;
-    res.status(200).json(version);
+    res.status(200).json(version  || 'unknown');
   }
 ```
 
