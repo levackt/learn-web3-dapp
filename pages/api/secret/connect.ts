@@ -13,7 +13,7 @@ export default async function connect(
     const nodeInfo = undefined;
     const version = undefined;
 
-    res.status(200).json(version || 'unknown');
+    res.status(200).json(version);
   } catch (error) {
     let errorMessage = error instanceof Error ? error.message : 'Unknown Error';
     res.status(500).json(errorMessage);
